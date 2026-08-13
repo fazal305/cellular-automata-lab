@@ -36,6 +36,17 @@ export function useCanvas() {
       setSize({ width: cssWidth, height: cssHeight });
     };
 
+    // ResizeObserver's first callback is asynchronous — it can land a frame
+    // or more after mount. Sizing synchronously from the element's current
+    // layout box here means the canvas has a correct backing resolution for
+    // its very first paint, instead of briefly (or, in some embedding
+    // contexts, indefinitely) sitting at the browser's 300x150 default
+    // while CSS stretches that tiny bitmap across the full layout box.
+    const initialRect = canvas.getBoundingClientRect();
+    if (initialRect.width > 0 && initialRect.height > 0) {
+      applySize(initialRect.width, initialRect.height);
+    }
+
     const resizeObserver = new ResizeObserver((entries) => {
       const entry = entries[0];
       if (!entry) return;
