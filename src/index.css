@@ -120,7 +120,11 @@ kbd {
    ========================================================================= */
 .app-shell {
   display: grid;
-  grid-template-rows: var(--header-height) 1fr var(--footer-height);
+  /* Footer is `auto`, not a fixed height: SimulationControls wraps onto a
+     second line on narrow viewports, and a fixed track combined with this
+     grid's overflow:hidden was silently clipping that second line instead
+     of showing it. */
+  grid-template-rows: var(--header-height) 1fr auto;
   height: 100vh;
   overflow: hidden;
 }
@@ -151,10 +155,10 @@ kbd {
 .app-shell__footer {
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  min-height: var(--footer-height);
+  padding: 10px 16px;
   border-top: 1px solid var(--border);
   background: var(--surface);
-  overflow-x: auto;
 }
 
 /* =========================================================================
@@ -181,7 +185,12 @@ kbd {
   white-space: nowrap;
 }
 
-.app-header__menu-toggle {
+/* Compound selector so this reliably beats .icon-button's `display:
+   inline-flex` regardless of source order — two same-specificity rules
+   setting different `display` values is a real bug (later one always
+   wins), which previously left this button visible at every viewport
+   width instead of only on narrow ones. */
+.icon-button.app-header__menu-toggle {
   display: none;
 }
 
@@ -287,6 +296,39 @@ kbd {
   font-size: 0.85rem;
   color: var(--text-secondary);
   line-height: 1.4;
+}
+
+/* Footer controls: unlike the sidebar's stacked .control-panel card, this
+   sits in a horizontal bar, so buttons and the speed group sit side by
+   side (wrapping onto a second line on narrow viewports) instead of
+   stacking vertically. */
+.simulation-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  width: 100%;
+}
+
+.simulation-controls__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.simulation-controls__speed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 200px;
+}
+
+.simulation-controls__speed select {
+  width: auto;
+}
+
+.simulation-controls__speed input[type='range'] {
+  width: 120px;
 }
 
 .control-panel__checkbox {
@@ -625,7 +667,7 @@ input[type='checkbox'] {
    Responsive
    ========================================================================= */
 @media (max-width: 900px) {
-  .app-header__menu-toggle {
+  .icon-button.app-header__menu-toggle {
     display: inline-flex;
   }
 

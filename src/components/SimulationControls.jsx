@@ -24,8 +24,8 @@ export default function SimulationControls({
   const speedIndex = speedPresets.findIndex((preset) => preset.id === speedId);
 
   return (
-    <section className="control-panel" aria-label="Simulation controls">
-      <div className="control-panel__buttons">
+    <section className="simulation-controls" aria-label="Simulation controls">
+      <div className="simulation-controls__buttons">
         <button
           type="button"
           className="button button--primary"
@@ -68,7 +68,7 @@ export default function SimulationControls({
         </button>
       </div>
 
-      <div className="control-panel__speed">
+      <div className="simulation-controls__speed">
         <label htmlFor="speed-select" className="control-label">
           Speed
         </label>
