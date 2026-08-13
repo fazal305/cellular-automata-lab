@@ -232,6 +232,7 @@ function App() {
       {loaderLabel && <Loader label={loaderLabel} />}
 
       <AppShell
+        isSidebarOpen={isSidebarOpen}
         header={
           <Header
             isRunning={simulation.isRunning}

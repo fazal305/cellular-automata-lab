@@ -133,6 +133,21 @@ kbd {
   display: grid;
   grid-template-columns: var(--sidebar-width) 1fr var(--aside-width);
   min-height: 0;
+  /* No transition here: animating `grid-template-columns` (especially
+     across a value containing `1fr`) is unreliable — in testing it left
+     the computed layout stuck at the pre-toggle track sizes indefinitely
+     despite the matching rule being applied. Snapping instantly is
+     correct every time; animating the sidebar's own width would be the
+     right way to get a smooth transition back, if wanted later. */
+}
+
+/* Desktop/tablet sidebar collapse: shrinking the grid track to 0 pushes
+   the main canvas to fill that space, rather than overlaying it. On
+   narrow viewports this is superseded by the overlay behavior below
+   (the sidebar switches to position:absolute there, so its grid track
+   size stops mattering visually). */
+.app-shell__body--sidebar-collapsed {
+  grid-template-columns: 0px 1fr var(--aside-width);
 }
 
 .app-shell__main {
@@ -185,13 +200,13 @@ kbd {
   white-space: nowrap;
 }
 
-/* Compound selector so this reliably beats .icon-button's `display:
-   inline-flex` regardless of source order — two same-specificity rules
-   setting different `display` values is a real bug (later one always
-   wins), which previously left this button visible at every viewport
-   width instead of only on narrow ones. */
+/* Compound selector (rather than relying on .icon-button's own `display:
+   inline-flex`) so this is explicit and can't lose a same-specificity
+   cascade tie to a later-declared rule. The sidebar toggle is available
+   at every viewport width — collapsing pushes the canvas wider on
+   desktop/tablet, and overlays on narrow screens (see media query below). */
 .icon-button.app-header__menu-toggle {
-  display: none;
+  display: inline-flex;
 }
 
 .app-header__fps {
@@ -241,6 +256,7 @@ kbd {
    Sidebar
    ========================================================================= */
 .app-sidebar {
+  overflow-x: hidden;
   overflow-y: auto;
   border-right: 1px solid var(--border);
   background: var(--surface);
@@ -667,10 +683,6 @@ input[type='checkbox'] {
    Responsive
    ========================================================================= */
 @media (max-width: 900px) {
-  .icon-button.app-header__menu-toggle {
-    display: inline-flex;
-  }
-
   .app-shell__body {
     grid-template-columns: 1fr;
     position: relative;

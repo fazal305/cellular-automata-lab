@@ -5,11 +5,13 @@
  * that. Keeping layout structure separate from content keeps this component
  * stable even as individual panels change.
  */
-export default function AppShell({ header, sidebar, main, statisticsPanel, footer }) {
+export default function AppShell({ header, sidebar, main, statisticsPanel, footer, isSidebarOpen }) {
+  const bodyClassName = `app-shell__body${isSidebarOpen ? '' : ' app-shell__body--sidebar-collapsed'}`;
+
   return (
     <div className="app-shell">
       {header}
-      <div className="app-shell__body">
+      <div className={bodyClassName}>
         {sidebar}
         <main className="app-shell__main" aria-label="Simulation canvas">
           {main}
